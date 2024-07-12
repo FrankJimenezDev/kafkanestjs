@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './users/entities/user.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { User } from './users/entities/user.entity';
         synchronize: true, // No uses esto en producción, ya que puede perder datos.
       }),
     }),
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
