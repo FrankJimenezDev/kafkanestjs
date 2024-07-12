@@ -1,26 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { CreateKafkaDto } from './dto/create-kafka.dto';
-import { UpdateKafkaDto } from './dto/update-kafka.dto';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
-export class KafkaService {
-  create(createKafkaDto: CreateKafkaDto) {
-    return 'This action adds a new kafka';
+export class KafkaService implements OnModuleInit {
+  constructor(@Inject('KAFKA_SERVICE') private readonly clientKafka: ClientKafka) {}
+  private readonly logger = new Logger(KafkaService.name);
+
+  async onModuleInit() {
+    await this.clientKafka.connect();
   }
 
-  findAll() {
-    return `This action returns all kafka`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} kafka`;
-  }
-
-  update(id: number, updateKafkaDto: UpdateKafkaDto) {
-    return `This action updates a #${id} kafka`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} kafka`;
+  emitMessage(topic: string, message: any) {
+    this.logger.log(`Emitting message to Kafka topic "${topic}": ${JSON.stringify(message)}`);
+    return this.clientKafka.emit(topic, message);
   }
 }
